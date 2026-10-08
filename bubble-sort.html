@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐾 Bubble Sort Adventure</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
+            background: linear-gradient(135deg, #ffe6f2, #e4f5ff, #fff5d6);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px 15px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 42px;
+            color: #ff5c8a;
+            text-shadow: 3px 3px white;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            margin-top: 8px;
+            color: #666;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* Explanation */
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .info-box h2 {
+            margin-top: 0;
+            color: #7c5cff;
+        }
+
+        .info-box p {
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            color: #ff4f81;
+            font-weight: bold;
+        }
+
+        /* Sorting area */
+
+        .sort-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        #array {
+            min-height: 260px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 14px;
+            padding: 30px 10px;
+            flex-wrap: wrap;
+        }
+
+        .animal {
+            width: 105px;
+            height: 150px;
+            background: white;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.12);
+            border: 4px solid #f2f2f2;
+            transition: transform 0.4s ease,
+                        background 0.3s ease,
+                        border 0.3s ease;
+            position: relative;
+        }
+
+        .animal .emoji {
+            font-size: 55px;
+            line-height: 1;
+        }
+
+        .animal .number {
+            margin-top: 8px;
+            font-size: 25px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .animal.current {
+            transform: translateY(-20px) scale(1.08);
+            border-color: #ffca3a;
+            background: #fff8d7;
+        }
+
+        .animal.compare {
+            transform: translateY(-25px) scale(1.08);
+            border-color: #ff5c8a;
+            background: #ffe5ef;
+        }
+
+        .animal.sorted {
+            border-color: #61c98b;
+            background: #e8fff1;
+        }
+
+        .animal.swapping {
+            animation: bounce 0.7s ease;
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-35px) rotate(-5deg);
+            }
+
+            60% {
+                transform: translateY(-35px) rotate(5deg);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Status */
+
+        .status {
+            text-align: center;
+            min-height: 45px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #635bff;
+            padding: 10px;
+        }
+
+        /* Controls */
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 13px 20px;
+            border-radius: 18px;
+            font-size: 16px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .start {
+            background: #65d68a;
+            color: white;
+        }
+
+        .pause {
+            background: #ffca3a;
+            color: #5c4500;
+        }
+
+        .step {
+            background: #7c5cff;
+            color: white;
+        }
+
+        .shuffle {
+            background: #ff7a59;
+            color: white;
+        }
+
+        .reset {
+            background: #e5e5e5;
+            color: #444;
+        }
+
+        /* Speed */
+
+        .speed {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .speed input {
+            width: 220px;
+            accent-color: #7c5cff;
+        }
+
+        /* Statistics */
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .stat {
+            min-width: 150px;
+            padding: 15px;
+            background: #f8f8ff;
+            border-radius: 18px;
+            text-align: center;
+        }
+
+        .stat span {
+            display: block;
+            font-size: 28px;
+            font-weight: bold;
+            color: #7c5cff;
+        }
+
+        /* Message */
+
+        .success {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: #e5fff0;
+            border: 3px solid #61c98b;
+            border-radius: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #269653;
+            animation: appear 0.5s ease;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Mobile */
+
+        @media (max-width: 700px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .animal {
+                width: 80px;
+                height: 125px;
+            }
+
+            .animal .emoji {
+                font-size: 42px;
+            }
+
+            .animal .number {
+                font-size: 21px;
+            }
+
+            #array {
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🐾 Bubble Sort Adventure 🫧</h1>
+    <div class="subtitle">
+        Help our cute friends find their correct places!
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="info-box">
+        <h2>🧠 How does Bubble Sort work?</h2>
+
+        <p>
+            Bubble Sort looks at two neighbouring characters
+            and compares their numbers.
+        </p>
+
+        <p>
+            If the left number is
+            <span class="highlight">bigger</span>
+            than the right number,
+            they swap places! 🔄
+        </p>
+
+        <p>
+            After every round, the biggest number
+            <span class="highlight">"bubbles"</span>
+            to the end. 🫧
+        </p>
+    </div>
+
+    <div class="sort-area">
+
+        <div id="array"></div>
+
+        <div class="status" id="status">
+            🐰 Ready to start Bubble Sort!
+        </div>
+
+        <div class="controls">
+
+            <button class="start" onclick="startSort()">
+                ▶️ Start
+            </button>
+
+            <button class="pause" onclick="pauseSort()">
+                ⏸️ Pause
+            </button>
+
+            <button class="step" onclick="stepSort()">
+                👣 Step
+            </button>
+
+            <button class="shuffle" onclick="shuffleArray()">
+                🔀 Shuffle
+            </button>
+
+            <button class="reset" onclick="resetArray()">
+                🔄 Reset
+            </button>
+
+        </div>
+
+        <div class="speed">
+            🐢 Slow
+            <input
+                type="range"
+                id="speed"
+                min="100"
+                max="1500"
+                value="700"
+            >
+            Fast 🐇
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                Comparisons
+                <span id="comparisons">0</span>
+            </div>
+
+            <div class="stat">
+                Swaps
+                <span id="swaps">0</span>
+            </div>
+
+            <div class="stat">
+                Pass
+                <span id="pass">0</span>
+            </div>
+
+        </div>
+
+        <div class="success" id="success">
+            🎉 Amazing! 🎉
+            <br>
+            🐱🐶🐼🐰🦊
+            <br>
+            Everyone is in the correct order!
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const originalArray = [7, 3, 9, 2, 6, 1, 8];
+
+    let numbers = [...originalArray];
+
+    const animals = [
+        "🐱",
+        "🐶",
+        "🐼",
+        "🐰",
+        "🦊",
+        "🐸",
+        "🐨",
+        "🐯",
+        "🐵",
+        "🐻"
+    ];
+
+    let i = 0;
+    let j = 0;
+
+    let comparisons = 0;
+    let swaps = 0;
+    let pass = 0;
+
+    let sorting = false;
+    let timer = null;
+    let busy = false;
+
+    function renderArray(highlightA = -1, highlightB = -1) {
+
+        const arrayContainer = document.getElementById("array");
+
+        arrayContainer.innerHTML = "";
+
+        numbers.forEach((number, index) => {
+
+            const animal = document.createElement("div");
+
+            animal.className = "animal";
+
+            if (index === highlightA || index === highlightB) {
+                animal.classList.add("compare");
+            }
+
+            if (index >= numbers.length - pass && pass > 0) {
+                animal.classList.add("sorted");
+            }
+
+            animal.innerHTML = `
+                <div class="emoji">
+                    ${animals[index % animals.length]}
+                </div>
+
+                <div class="number">
+                    ${number}
+                </div>
+            `;
+
+            arrayContainer.appendChild(animal);
+
+        });
+
+    }
+
+    function updateStats() {
+
+        document.getElementById("comparisons").textContent =
+            comparisons;
+
+        document.getElementById("swaps").textContent =
+            swaps;
+
+        document.getElementById("pass").textContent =
+            pass;
+
+    }
+
+
+    function setStatus(message) {
+
+        document.getElementById("status").textContent =
+            message;
+
+    }
+
+
+    function startSort() {
+
+        if (numbersAreSorted()) {
+            setStatus("🎉 Already sorted!");
+            return;
+        }
+
+        if (sorting) return;
+
+        sorting = true;
+
+        setStatus("🚀 Bubble Sort is starting!");
+
+        runNextStep();
+
+    }
+
+    function pauseSort() {
+
+        sorting = false;
+
+        clearTimeout(timer);
+
+        setStatus("⏸️ Sorting paused. Click Start to continue.");
+
+    }
+
+    async function stepSort() {
+
+        if (sorting) return;
+
+        await performStep();
+
+    }
+
+
+    function runNextStep() {
+
+        if (!sorting) return;
+
+        performStep().then(() => {
+
+            if (sorting) {
+
+                const speed =
+                    1600 -
+                    Number(document.getElementById("speed").value);
+
+                timer = setTimeout(
+                    runNextStep,
+                    speed
+                );
+
+            }
+
+        });
+
+    }
+
+    async function performStep() {
+
+        if (busy) return;
+
+        busy = true;
+
+        /* End of current pass */
+
+        if (j >= numbers.length - i - 1) {
+
+            pass++;
+
+            j = 0;
+
+            i++;
+
+            updateStats();
+
+            renderArray();
+
+            if (i >= numbers.length - 1) {
+
+                finishSorting();
+
+                busy = false;
+
+                return;
+
+            }
+
+            setStatus(
+                `✨ Pass ${i} complete! The largest number has bubbled to the end.`
+            );
+
+            await wait(400);
+
+        }
+
+
+        /* Compare neighbours */
+
+        const left = numbers[j];
+        const right = numbers[j + 1];
+
+        comparisons++;
+
+        renderArray(j, j + 1);
+
+        setStatus(
+            `👀 Comparing ${left} and ${right}...`
+        );
+
+        updateStats();
+
+        await wait(500);
+
+
+        /* Swap */
+
+        if (left > right) {
+
+            setStatus(
+                `🔄 ${left} is bigger than ${right}! Swap them!`
+            );
+
+            await wait(400);
+
+            const temp = numbers[j];
+
+            numbers[j] = numbers[j + 1];
+
+            numbers[j + 1] = temp;
+
+            swaps++;
+
+            renderArray(j, j + 1);
+
+            addSwapAnimation(j, j + 1);
+
+            updateStats();
+
+            await wait(700);
+
+        } else {
+
+            setStatus(
+                `👍 ${left} is smaller than ${right}. No swap needed!`
+            );
+
+            await wait(500);
+
+        }
+
+        j++;
+
+        renderArray();
+
+        busy = false;
+
+    }
+
+    function addSwapAnimation(a, b) {
+
+        const items =
+            document.querySelectorAll(".animal");
+
+        if (items[a]) {
+            items[a].classList.add("swapping");
+        }
+
+        if (items[b]) {
+            items[b].classList.add("swapping");
+        }
+
+        setTimeout(() => {
+
+            if (items[a]) {
+                items[a].classList.remove("swapping");
+            }
+
+            if (items[b]) {
+                items[b].classList.remove("swapping");
+            }
+
+        }, 700);
+
+    }
+
+    function finishSorting() {
+
+        sorting = false;
+
+        clearTimeout(timer);
+
+        i = numbers.length;
+
+        renderArray();
+
+        document.getElementById("success").style.display =
+            "block";
+
+        setStatus(
+            "🏆 Bubble Sort completed successfully!"
+        );
+
+    }
+
+    function shuffleArray() {
+
+        pauseSort();
+
+        numbers = [...originalArray];
+
+        for (let i = numbers.length - 1; i > 0; i--) {
+
+            const random =
+                Math.floor(Math.random() * (i + 1));
+
+            [
+                numbers[i],
+                numbers[random]
+            ] = [
+                numbers[random],
+                numbers[i]
+            ];
+
+        }
+
+        resetVariables();
+
+        setStatus(
+            "🔀 The animals have been shuffled!"
+        );
+
+        renderArray();
+
+    }
+
+    function resetArray() {
+
+        pauseSort();
+
+        numbers = [...originalArray];
+
+        resetVariables();
+
+        setStatus(
+            "🔄 Ready! Let's sort the animals again."
+        );
+
+        renderArray();
+
+    }
+
+    function resetVariables() {
+
+        i = 0;
+
+        j = 0;
+
+        comparisons = 0;
+
+        swaps = 0;
+
+        pass = 0;
+
+        busy = false;
+
+        document.getElementById("success").style.display =
+            "none";
+
+        updateStats();
+
+    }
+
+    function numbersAreSorted() {
+
+        for (let k = 0; k < numbers.length - 1; k++) {
+
+            if (numbers[k] > numbers[k + 1]) {
+                return false;
+            }
+
+        }
+
+        return true;
+
+    }
+
+
+    function wait(milliseconds) {
+
+        return new Promise(resolve =>
+            setTimeout(resolve, milliseconds)
+        );
+
+    }
+
+    renderArray();
+    updateStats();
+
+</script>
+</body>
+</html>
